@@ -234,10 +234,10 @@ export class Hexagon extends Piece {
 
             let allowedDirections = [];
 
-            if (this.color === 'black') {
+            if (this.color === 'red') {
                 // Black Hexagons can capture Triangles from S, NW, NE
                 allowedDirections = [DIRECTIONS.N, DIRECTIONS.NW, DIRECTIONS.NE];
-            } else if (this.color === 'red') {
+            } else if (this.color === 'black') {
                 // Red Hexagons can capture Triangles from N, SW, SE
                 allowedDirections = [DIRECTIONS.S, DIRECTIONS.SW, DIRECTIONS.SE];
             }
