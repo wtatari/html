@@ -15,11 +15,11 @@ export class Piece {
             case 'triangle':
                 return this.color === 'red' ? '▲' : '▼';
             case 'square':
-                return '♦';
+                return '◊';
             case 'hexagon':
                 return '⬢';
             case 'octagon':
-                return '⯃';
+                return '○';
             default:
                 return '';
         }
