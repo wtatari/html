@@ -17,6 +17,16 @@ class Piece {
     getClass() {
         return `piece piece-${this.color}`;
     }
+
+    // Base method for attack; override in subclasses
+    canEat(targetPiece) {
+        return false;
+    }
+
+    // Determine if the attack comes from a weak side based on the attacker and defender's direction
+    isWeakSideAttack(direction) {
+        return false;  // Base class has no weak side; override in subclasses
+    }
 }
 
 
@@ -49,15 +59,15 @@ class Triangle extends Piece {
         return this.calculateMoves(fromRow, fromCol, directions, board);
     }
 
-    // Logic to calculate moves, checking for merges
+    // Logic to calculate moves, checking for merges and eating other pieces
     calculateMoves(fromRow, fromCol, directions, board) {
         const possibleMoves = [];
-    
+
         directions.forEach(({ row, col }) => {
             for (let i = 1; i <= this.steps; i++) {
                 const newRow = fromRow + row * i;
                 const newCol = fromCol + col * i;
-    
+
                 if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE) {
                     if (board[newRow][newCol] === null) {
                         possibleMoves.push({ row: newRow, col: newCol });
@@ -68,6 +78,10 @@ class Triangle extends Piece {
                             possibleMoves.push({ row: newRow, col: newCol, merge: mergedPiece });
                         }
                         break; // Stop further movement in this direction after merging
+                    } else if (this.canEat(board[newRow][newCol], row, col)) {
+                        // If the triangle can eat the target piece
+                        possibleMoves.push({ row: newRow, col: newCol, eat: true });
+                        break; // Stop further movement after eating
                     } else {
                         break; // Stop if there is any other piece
                     }
@@ -76,10 +90,10 @@ class Triangle extends Piece {
                 }
             }
         });
-    
+
         return possibleMoves;
     }
-    
+
     // Merging logic
     mergeWith(otherPiece) {
         if (otherPiece.shape === 'triangle' && otherPiece.color === this.color) {
@@ -88,26 +102,56 @@ class Triangle extends Piece {
         }
         return null;  // No merge possible
     }
+
+    // Eating logic with directional restrictions
+    canEat(targetPiece, rowDir, colDir) {
+        // Triangle can eat anything larger in angle size (Square, Hexagon, Octagon)
+        const shapeAngles = {
+            triangle: 30,
+            square: 90,
+            hexagon: 120,
+            octagon: 135
+        };
+
+        // Triangle can eat other triangles only if attacking from specific directions
+        const allowedDirections = [
+            { row: 0, col: -1 },   // W
+            { row: 0, col: 1 },    // E
+            { row: -1, col: -1 },  // NW
+            { row: -1, col: 1 },   // NE
+            { row: 1, col: 0 }     // S
+        ];
+
+        const isAllowedDirection = allowedDirections.some(dir => dir.row === rowDir && dir.col === colDir);
+
+        if (targetPiece.shape === 'triangle' && isAllowedDirection) {
+            return true;  // Triangle can eat another triangle from these directions
+        }
+
+        return shapeAngles[this.shape] < shapeAngles[targetPiece.shape];
+    }
 }
+
 
 class Square extends Piece {
     constructor(color) {
         super(color, 'square');
-        this.steps = 4;
+        this.steps = 4; // Square can move up to 4 steps
     }
 
+    // Define valid movement directions for squares: N, S, W, E
     getValidMoves(fromRow, fromCol, board) {
         const directions = [
-            { row: -1, col: 0 },  // N
-            { row: 1, col: 0 },   // S
-            { row: 0, col: -1 },  // W
-            { row: 0, col: 1 }    // E
+            { row: -1, col: 0 },  // N (north)
+            { row: 1, col: 0 },   // S (south)
+            { row: 0, col: -1 },  // W (west)
+            { row: 0, col: 1 }    // E (east)
         ];
 
         return this.calculateMoves(fromRow, fromCol, directions, board);
     }
 
-    // Adding the calculateMoves method to Square class
+    // Logic to calculate moves, checking for merges and eating other pieces
     calculateMoves(fromRow, fromCol, directions, board) {
         const possibleMoves = [];
 
@@ -118,9 +162,21 @@ class Square extends Piece {
 
                 if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE) {
                     if (board[newRow][newCol] === null) {
+                        // Move is possible if the tile is empty
                         possibleMoves.push({ row: newRow, col: newCol });
+                    } else if (board[newRow][newCol].shape === this.shape && board[newRow][newCol].color === this.color) {
+                        // Handle merging logic for two squares
+                        let mergedPiece = this.mergeWith(board[newRow][newCol]);
+                        if (mergedPiece) {
+                            possibleMoves.push({ row: newRow, col: newCol, merge: mergedPiece });
+                        }
+                        break; // Stop further movement in this direction after merging
+                    } else if (this.canEat(fromRow, fromCol, newRow, newCol, board[newRow][newCol])) {
+                        // Eating logic if square can eat the target piece
+                        possibleMoves.push({ row: newRow, col: newCol, eat: true });
+                        break; // Stop further movement after eating
                     } else {
-                        break; // Stop if any piece is encountered
+                        break; // Stop if there is any other piece
                     }
                 } else {
                     break; // Stop if out of bounds
@@ -129,6 +185,40 @@ class Square extends Piece {
         });
 
         return possibleMoves;
+    }
+
+    // Merging logic for squares: two squares combine into a hexagon
+    mergeWith(otherPiece) {
+        if (otherPiece.shape === 'square' && otherPiece.color === this.color) {
+            // Merge into a Hexagon
+            return new Hexagon(this.color);
+        }
+        return null;  // No merge possible
+    }
+
+    // Eating logic for squares
+    canEat(fromRow, fromCol, targetRow, targetCol, targetPiece) {
+        if (targetPiece.shape === 'triangle') {
+            const rowDiff = targetRow - fromRow;
+            const colDiff = targetCol - fromCol;
+
+            if (this.color === 'red') {
+                // Red squares can eat triangles from N, W, or E
+                return (
+                    (rowDiff === -1 && colDiff === 0) ||  // N (north)
+                    (colDiff === -1 && rowDiff === 0) ||  // W (west)
+                    (colDiff === 1 && rowDiff === 0)      // E (east)
+                );
+            } else {
+                // Black squares can eat triangles from S, W, or E
+                return (
+                    (rowDiff === 1 && colDiff === 0) ||   // S (south)
+                    (colDiff === -1 && rowDiff === 0) ||  // W (west)
+                    (colDiff === 1 && rowDiff === 0)      // E (east)
+                );
+            }
+        }
+        return false;
     }
 }
 
@@ -149,6 +239,47 @@ class Hexagon extends Piece {
         ];
 
         return this.calculateMoves(fromRow, fromCol, directions, board);
+    }
+
+    // Calculate possible moves and check for merges
+    calculateMoves(fromRow, fromCol, directions, board) {
+        const possibleMoves = [];
+
+        directions.forEach(({ row, col }) => {
+            for (let i = 1; i <= this.steps; i++) {
+                const newRow = fromRow + row * i;
+                const newCol = fromCol + col * i;
+
+                if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE) {
+                    if (board[newRow][newCol] === null) {
+                        // Move is possible if the tile is empty
+                        possibleMoves.push({ row: newRow, col: newCol });
+                    } else if (board[newRow][newCol].shape === this.shape && board[newRow][newCol].color === this.color) {
+                        // Handle merging logic for two hexagons
+                        let mergedPiece = this.mergeWith(board[newRow][newCol]);
+                        if (mergedPiece) {
+                            possibleMoves.push({ row: newRow, col: newCol, merge: mergedPiece });
+                        }
+                        break; // Stop further movement in this direction after merging
+                    } else {
+                        break; // Stop if there is any other piece
+                    }
+                } else {
+                    break; // Stop if out of bounds
+                }
+            }
+        });
+
+        return possibleMoves;
+    }
+
+    // Merging logic for hexagons: two hexagons combine into an octagon
+    mergeWith(otherPiece) {
+        if (otherPiece.shape === 'hexagon' && otherPiece.color === this.color) {
+            // Merge into an Octagon
+            return new Octagon(this.color);
+        }
+        return null;  // No merge possible
     }
 }
 
@@ -172,8 +303,31 @@ class Octagon extends Piece {
 
         return this.calculateMoves(fromRow, fromCol, directions, board);
     }
-}
 
+    calculateMoves(fromRow, fromCol, directions, board) {
+        const possibleMoves = [];
+
+        directions.forEach(({ row, col }) => {
+            for (let i = 1; i <= this.steps; i++) {
+                const newRow = fromRow + row * i;
+                const newCol = fromCol + col * i;
+
+                if (newRow >= 0 && newRow < BOARD_SIZE && newCol >= 0 && newCol < BOARD_SIZE) {
+                    if (board[newRow][newCol] === null) {
+                        // Move is possible if the tile is empty
+                        possibleMoves.push({ row: newRow, col: newCol });
+                    } else {
+                        break; // Stop if there is any other piece
+                    }
+                } else {
+                    break; // Stop if out of bounds
+                }
+            }
+        });
+
+        return possibleMoves;
+    }
+}
 
 const BOARD_SIZE = 8;
 let selectedPiece = null;
