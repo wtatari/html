@@ -1,76 +1,31 @@
-/* styles.css */
+.tile .piece {
+    cursor: pointer;
+}
 
-/* Reset default margins and paddings */
-* {
-    margin: 0;
-    padding: 0;
+/* Change cursor to pointer when hovering over highlighted tiles */
+.tile.selected {
+    cursor: pointer;
+}
+
+/* Highlighted tiles */
+.tile.selected {
+    border: 0.5px solid rgb(0, 255, 191);
     box-sizing: border-box;
 }
 
-/* Body styling */
+/* Existing styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-}
-
-/* Container adjustments */
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Board Container */
-.board-container {
-    position: relative;
-    display: inline-block;
-}
-
-/* Board Labels */
-.board-labels-top,
-.board-labels-bottom {
-    display: flex;
-    width: calc(60px * 8 + 40px); /* 8 tiles + padding */
-    margin: 0 auto;
-}
-
-.board-labels-top .board-label,
-.board-labels-bottom .board-label {
-    width: 60px;
-    height: 20px;
     text-align: center;
-    font-weight: bold;
-    line-height: 20px;
-    color: #333;
 }
 
-.board-label-empty {
-    width: 20px;
-    height: 20px;
-}
-
-.board-labels-side {
-    display: flex;
-    flex-direction: column;
-}
-
-.board-label-vertical {
-    width: 20px;
-    height: 60px;
-    text-align: center;
-    font-weight: bold;
-    line-height: 60px;
-    color: #333;
-}
-
-/* Adjust game board */
 #game-board {
-    display: grid;
-    grid-template-columns: repeat(8, 60px);
-    grid-template-rows: repeat(8, 60px);
-    border: 2px solid #333;
+    display: flex;
+    flex-wrap: wrap;
+    width: 480px; /* 8 tiles * 60px each */
+    margin: 20px auto;
 }
 
-/* Tile styles */
 .tile {
     width: 60px;
     height: 60px;
@@ -78,23 +33,16 @@ body {
 }
 
 .tile.light {
-    background-color: #f0d9b5;
+    background-color: #eee;
 }
 
 .tile.dark {
-    background-color: #b58863;
+    background-color: #ccc;
 }
 
-.tile.selected {
-    border: 3px solid yellow;
-    box-sizing: border-box;
-}
-
-/* Piece styles */
 .piece {
     font-size: 40px;
     line-height: 60px;
-    text-align: center;
 }
 
 .piece-red {
@@ -103,105 +51,4 @@ body {
 
 .piece-black {
     color: black;
-}
-
-/* Header styling */
-h1 {
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-}
-
-/* Footer styling */
-footer p {
-    margin: 0;
-    padding: 10px 0;
-    background-color: #343a40;
-    color: #fff;
-}
-
-/* Link styling */
-.btn-link {
-    color: #007bff;
-}
-
-.btn-link:hover {
-    color: #0056b3;
-    text-decoration: none;
-}
-
-/* Cursor styles */
-.tile .piece {
-    cursor: pointer;
-}
-
-.tile.selected {
-    cursor: pointer;
-}
-
-/* Adjustments for better design */
-#current-player {
-    font-size: 1.2em;
-}
-
-.board-label {
-    user-select: none;
-}
-
-.board-label-vertical {
-    user-select: none;
-}
-
-/* Adjustments for label positioning */
-.board-labels-top,
-.board-labels-bottom {
-    padding-left: 20px; /* Adjust for side labels */
-}
-
-.board-labels-side {
-    padding-top: 0;
-}
-
-/* Adjustments for better alignment */
-.board-container {
-    margin: 0 auto;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
-
-    #game-board {
-        transform: scale(0.8);
-        transform-origin: top center;
-    }
-
-    .board-labels-top,
-    .board-labels-bottom {
-        width: calc(60px * 8 * 0.8 + 40px);
-    }
-
-    .board-labels-side .board-label-vertical {
-        width: 16px;
-        height: 48px;
-        line-height: 48px;
-    }
-
-    .board-labels-top .board-label,
-    .board-labels-bottom .board-label {
-        width: 48px;
-        height: 16px;
-        line-height: 16px;
-    }
-
-    .tile {
-        width: 48px;
-        height: 48px;
-    }
-
-    .piece {
-        font-size: 32px;
-        line-height: 48px;
-    }
 }

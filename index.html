@@ -2,26 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ZaaWea</title>
-    <!-- Responsive Meta Tag -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Include Bootstrap CSS -->
+    <title>ZaaWea</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Include Custom Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container text-center mt-5">
-        <h1>ZaaWea</h1>
-        <div id="current-player" class="badge badge-danger">Current Player: RED</div>
-        <div id="game-board"></div>
-        <button id="reset-btn" class="btn btn-primary mt-4">Reset Game</button>
-        <div class="mt-4">
-            <a href="disclosure.html" class="btn btn-link">View Public Disclosure</a>
-            <a href="rules.html" class="btn btn-link">How to Play</a>
-        </div>
-    </div>
+        <h1 class="mb-4">ZaaWea</h1>
+        <div id="current-player" class="badge badge-primary">RED</div>
+        <div id="game-board" class="my-4"></div>
+        <button id="reset-btn" class="btn btn-danger mb-3">Reset Game</button><br />
+        <a href="disclosure.html" class="btn btn-link">View Public Disclosure</a>
+        <a href="rules.html" class="btn btn-link">How to play</a>
 
+    </div>
     <footer class="text-center mt-4">
         <p>&copy; <span id="year"></span> ZaaWea | Designed by wtatari</p>
     </footer>
@@ -37,5 +32,7 @@
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
+
 </body>
 </html>
+
