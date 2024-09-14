@@ -224,7 +224,7 @@ export class Hexagon extends Piece {
         return calculatePieceMoves(this, fromRow, fromCol, filteredDirections, board);
     }
 
-    // Updated canCapture method
+    // canCapture method
     canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
         if (targetPiece.shape === 'triangle') {
             // Calculate direction of the attack
@@ -282,39 +282,39 @@ export class Octagon extends Piece {
         return calculatePieceMoves(this, fromRow, fromCol, directions, board);
     }
 
-    // Updated canCapture method
-    canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
-        if (targetPiece.shape === 'triangle') {
-            // Calculate direction of the attack
-            const rowDiff = targetRow - fromRow;
-            const colDiff = targetCol - fromCol;
-            const dir = { row: Math.sign(rowDiff), col: Math.sign(colDiff) };
+// Updated canCapture method for Octagon
+canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
+    if (targetPiece.shape === 'hexagon') {
+        // Calculate direction of the attack
+        const rowDiff = targetRow - fromRow;
+        const colDiff = targetCol - fromCol;
+        const dir = { row: Math.sign(rowDiff), col: Math.sign(colDiff) };
 
-            let allowedDirections = [];
+        let allowedDirections = [];
 
-            if (this.color === 'black') {
-                // Black Octagons can capture Triangles from S, W, E, NW, NE
-                allowedDirections = [DIRECTIONS.N, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.SW, DIRECTIONS.SE];
-            } else if (this.color === 'red') {
-                // Red Octagons can capture Triangles from N, W, E, SW, SE
-                allowedDirections = [DIRECTIONS.S, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.NW, DIRECTIONS.NE];
-            }
-
-            // Check if attack direction is allowed
-            if (allowedDirections.some(d => d.row === dir.row && d.col === dir.col)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            // Use base class canCapture for other cases
-            return super.canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol);
+        if (this.color === 'black') {
+            // Black Octagons can capture Hexagons from W and E only
+            allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
+        } else if (this.color === 'red') {
+            // Red Octagons can capture Hexagons from W and E only
+            allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
         }
-    }
 
-    mergeWith(otherPiece) {
-        return null; // Octagons cannot merge further
+        // Check if attack direction is allowed
+        if (allowedDirections.some(d => d.row === dir.row && d.col === dir.col)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        // Use base class canCapture for other cases
+        return super.canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol);
     }
+}
+
+mergeWith(otherPiece) {
+    return null; // Octagons cannot merge further
+}
 }
 
 // Helper function to calculate moves
