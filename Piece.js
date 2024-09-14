@@ -282,22 +282,31 @@ export class Octagon extends Piece {
         return calculatePieceMoves(this, fromRow, fromCol, directions, board);
     }
 
-// Updated canCapture method for Octagon
-canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
-    if (targetPiece.shape === 'hexagon') {
+    // Updated canCapture method
+    canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
+        // Allow Octagons to capture any piece, regardless of color
+
         // Calculate direction of the attack
         const rowDiff = targetRow - fromRow;
         const colDiff = targetCol - fromCol;
         const dir = { row: Math.sign(rowDiff), col: Math.sign(colDiff) };
 
+        // Define allowed directions based on target piece
         let allowedDirections = [];
 
-        if (this.color === 'black') {
-            // Black Octagons can capture Hexagons from W and E only
+        if (targetPiece.shape === 'hexagon') {
             allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
-        } else if (this.color === 'red') {
-            // Red Octagons can capture Hexagons from W and E only
-            allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
+        } else if (targetPiece.shape === 'triangle') {
+            if (this.color === 'red') {
+                // Black Octagons can capture Triangles from S, W, E, NW, NE
+                allowedDirections = [DIRECTIONS.S, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.NW, DIRECTIONS.NE];
+            } else if (this.color === 'black') {
+                // Red Octagons can capture Triangles from N, W, E, SW, SE
+                allowedDirections = [DIRECTIONS.N, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.SW, DIRECTIONS.SE];
+            }
+        } else {
+            // For other pieces, allow capture from any direction
+            allowedDirections = Object.values(DIRECTIONS);
         }
 
         // Check if attack direction is allowed
@@ -306,15 +315,11 @@ canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
         } else {
             return false;
         }
-    } else {
-        // Use base class canCapture for other cases
-        return super.canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol);
     }
-}
 
-mergeWith(otherPiece) {
-    return null; // Octagons cannot merge further
-}
+    mergeWith(otherPiece) {
+        return null; // Octagons cannot merge further
+    }
 }
 
 // Helper function to calculate moves
