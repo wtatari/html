@@ -1,142 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>ZaaWea - Game Rules</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZaaWea - How to Play</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
+            background-color: #f8f9fa;
         }
-        h1, h2, h3 {
-            color: #333;
+
+        h1 {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #343a40;
         }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
+
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        ul ul {
-            list-style-type: circle;
-            margin-left: 20px;
+
+        .card-body {
+            background-color: #ffffff;
+            border-radius: 10px;
         }
+
+        .card-header {
+            background-color: #32ccb8;
+            color: white;
+            font-weight: bold;
+            text-align: left;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            background-color: #343a40;
+            color: white;
+        }
+
         p {
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
     </style>
 </head>
+
 <body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">How to Play ZaaWea</h1>
 
-    <h1>ZaaWea - Game Rules</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
 
-    <h2>Objective</h2>
-    <p>
-        ZaaWea is a two-player strategy game played on an 8x8 board. The goal is to defeat the opponent by strategically moving, merging, and attacking their pieces. The unique feature of ZaaWea is that the smaller the angle of the shape, the stronger it is during combat, making the simplest piece, the triangle, the strongest in most battles.
-    </p>
+                <!-- Card 1: Movement -->
+                <div class="card">
+                    <div class="card-header">1. Movement</div>
+                    <div class="card-body">
+                        <p>Each shape can move as many spaces as it has angles. For example, a triangle with 3 angles can move up to 3 spaces, while a square with 4 angles can move up to 4 spaces.</p>
+                    </div>
+                </div>
 
-    <h2>Setup</h2>
-    <ul>
-        <li>Each player starts with two rows of triangular pieces.</li>
-        <li>Red pieces begin on the bottom two rows, black pieces on the top two rows.</li>
-        <li>Pieces can merge to create new forms, allowing them to move further across the board but not necessarily making them "stronger" in terms of combat.</li>
-    </ul>
+                <!-- Card 2: Merging -->
+                <div class="card">
+                    <div class="card-header">2. Merging</div>
+                    <div class="card-body">
+                        <p>Two shapes of the same type and color can merge to form a new shape with one more angle. For example:
+                        <ul>
+                            <li>Two triangles merge to form a square (4 angles).</li>
+                            <li>Two squares merge to form a hexagon (6 angles).</li>
+                            <li>Two hexagons merge to form an octagon (8 angles).</li>
+                        </ul>
+                        </p>
+                    </div>
+                </div>
 
-    <h2>Types of Pieces</h2>
+                <!-- Card 3: Combat -->
+                <div class="card">
+                    <div class="card-header">3. Combat</div>
+                    <div class="card-body">
+                        <p>Shapes battle based on angles:
+                        <ul>
+                            <li>The shape with the smallest angle wins when their angles face each other.</li>
+                            <li>Angles always beat flat surfaces. If a shape's angle attacks another shape’s surface, the angle wins.</li>
+                            <li>If two shapes with equal angles face each other (e.g., two triangles), the shape that attacks first wins.</li>
+                        </ul>
+                        </p>
+                    </div>
+                </div>
 
-    <h3>Triangle</h3>
-    <ul>
-        <li>
-            <strong>Moves:</strong> Can move up to 3 tiles in specific directions.
-            <ul>
-                <li><strong>Red Triangle:</strong> Moves forward (south) or diagonally backward (northwest and northeast).</li>
-                <li><strong>Black Triangle:</strong> Moves forward (north) or diagonally backward (southwest and southeast).</li>
-            </ul>
-        </li>
-        <li>
-            <strong>Merging:</strong> Two triangles of the same color can merge to form a square. This gives the piece more maneuverability but does not necessarily make it stronger in combat.
-        </li>
-        <li>
-            <strong>Combat:</strong> Triangles have the smallest angle (30 degrees), which makes them very strong in battle. They can defeat any shape when attacking angle-to-angle or angle-to-surface.
-        </li>
-    </ul>
+                <!-- Card 4: Game Objective -->
+                <div class="card">
+                    <div class="card-header">4. Game Objective</div>
+                    <div class="card-body">
+                        <p>The goal is to outmaneuver your opponent by merging shapes, moving strategically, and winning battles based on the strength of angles and attack positions.</p>
+                    </div>
+                </div>
 
-    <h3>Square</h3>
-    <ul>
-        <li>
-            <strong>Moves:</strong> Can move up to 4 tiles in straight lines (north, south, east, west).
-        </li>
-        <li>
-            <strong>Merging:</strong> Two squares of the same color can merge to form a hexagon.
-        </li>
-        <li>
-            <strong>Combat:</strong> Squares have a larger angle (90 degrees). When attacked by a triangle from an angle, they will lose. However, squares can defeat other squares or shapes with larger angles if attacking from the right position.
-        </li>
-    </ul>
+            </div>
+        </div>
+    </div>
 
-    <h3>Hexagon</h3>
-    <ul>
-        <li>
-            <strong>Moves:</strong> Can move up to 6 tiles diagonally or straight.
-        </li>
-        <li>
-            <strong>Merging:</strong> Two hexagons of the same color can merge to form an octagon.
-        </li>
-        <li>
-            <strong>Combat:</strong> Hexagons have an angle of 120 degrees. They can defeat squares or triangles if they attack from the correct side, but are vulnerable when attacked by smaller-angle shapes from certain positions.
-        </li>
-    </ul>
+    <!-- Footer -->
+    <footer class="text-center">
+        <p>&copy; <span id="year"></span> ZaaWea | Designed by wtatari</p>
+        <script>
+            document.getElementById('year').textContent = new Date().getFullYear();
+        </script>
+    </footer>
 
-    <h3>Octagon</h3>
-    <ul>
-        <li>
-            <strong>Moves:</strong> Can move up to 8 tiles in any direction.
-        </li>
-        <li>
-            <strong>Combat:</strong> Octagons have the largest angle (135 degrees). They can be defeated by any other shape if the attack comes from an angle or a weak position, even though they are the most mobile pieces on the board.
-        </li>
-    </ul>
-
-    <h2>Merging</h2>
-    <ul>
-        <li>Merging two pieces of the same shape and color creates a new shape that can move further across the board.</li>
-        <li>Merging does not make a piece stronger in terms of combat; it simply changes the shape's maneuverability.</li>
-    </ul>
-
-    <h2>Movement</h2>
-    <ul>
-        <li>Each piece has a specific number of tiles it can move (steps), and the movement is based on where the angle of the shape is pointing.</li>
-        <li>Pieces cannot jump over or pass through other pieces.</li>
-        <li>Pieces must stop moving when they encounter another piece and it can't eat it or merge with it.</li>
-    </ul>
-
-    <h2>Attacking &amp; Eating</h2>
-    <ul>
-        <li>The smaller the angle, the stronger the piece is during combat.</li>
-        <li><strong>Angle-to-Angle:</strong> The piece with the smaller angle will win in a direct confrontation.</li>
-        <li><strong>Angle-to-Surface:</strong> If a piece attacks another shape by moving its angle toward a flat side (surface), the attacker wins.</li>
-        <li><strong>Same Angle:</strong> If two pieces with the same angle meet, the attacker wins.</li>
-        <li>
-            <strong>Combat is directional:</strong>
-            <ul>
-                <li>Triangles can attack larger shapes from all sides.</li>
-                <li>Squares are vulnerable to triangles when attacked from an angle, but can defeat hexagons if attacking from the right side.</li>
-                <li>Hexagons have a mix of strengths and vulnerabilities depending on the direction of the attack.</li>
-                <li>Octagons are the most maneuverable but the weakest in terms of defense since they can be eaten from multiple sides by smaller shapes.</li>
-            </ul>
-        </li>
-    </ul>
-
-    <h2>Turn Sequence</h2>
-    <ul>
-        <li>The game is turn-based, with players alternating turns.</li>
-        <li>On each turn, a player may move one piece or merge two pieces of the same type and color.</li>
-        <li>If a piece moves onto an opponent’s piece and meets the combat conditions, the attacking piece wins and the opponent’s piece is removed.</li>
-    </ul>
-
-    <h2>Winning the Game</h2>
-    <p>
-        A player wins by capturing all of their opponent's pieces or placing the opponent in a position where they cannot make any valid moves.
-    </p>
-
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
