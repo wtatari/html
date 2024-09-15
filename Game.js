@@ -260,37 +260,82 @@ function makeAIMove() {
 
 // Undo last move
 function undoLastMove() {
-    if (gameStateHistory.length > 1) {
-        gameStateHistory.pop(); // Remove the last state
-        const previousState = gameStateHistory[gameStateHistory.length - 1];
+    if (gameMode === 'human-vs-ai') {
+        // In human vs AI mode, undo the last two moves (AI's move and human's move)
+        if (gameStateHistory.length > 2) {
+            // Remove the last two states
+            gameStateHistory.pop(); // Remove AI's move
+            gameStateHistory.pop(); // Remove human's move
+            const previousState = gameStateHistory[gameStateHistory.length - 1];
 
-        // Restore the board, converting saved plain objects back to Piece instances
-        board = previousState.board.map(row => row.map(savedPiece => {
-            if (savedPiece) {
-                switch (savedPiece.shape) {
-                    case 'triangle':
-                        return new Triangle(savedPiece.color);
-                    case 'square':
-                        return new Square(savedPiece.color);
-                    case 'hexagon':
-                        return new Hexagon(savedPiece.color);
-                    case 'octagon':
-                        return new Octagon(savedPiece.color);
-                    default:
-                        return null;
+            // Restore the board
+            board = previousState.board.map(row => row.map(savedPiece => {
+                if (savedPiece) {
+                    switch (savedPiece.shape) {
+                        case 'triangle':
+                            return new Triangle(savedPiece.color);
+                        case 'square':
+                            return new Square(savedPiece.color);
+                        case 'hexagon':
+                            return new Hexagon(savedPiece.color);
+                        case 'octagon':
+                            return new Octagon(savedPiece.color);
+                        default:
+                            return null;
+                    }
+                } else {
+                    return null;
                 }
-            }
-            return null;
-        }));
+            }));
 
-        moveHistory = previousState.moveHistory;
-        currentPlayer = previousState.currentPlayer; // Restore the previous player
+            moveHistory = previousState.moveHistory;
+            currentPlayer = previousState.currentPlayer;
 
-        // Re-render the board after undo
-        renderBoard();
+            // Re-render the board
+            renderBoard();
 
-        // Update the current player display after undo
-        document.getElementById('current-player').textContent = `Current Player: ${currentPlayer.toUpperCase()}`;
+            // Update the current player display
+            document.getElementById('current-player').textContent = `Current Player: ${currentPlayer.toUpperCase()}`;
+        } else {
+            alert("Cannot undo any further!");
+        }
+    } else {
+        // In human vs human mode, undo the last move
+        if (gameStateHistory.length > 1) {
+            gameStateHistory.pop(); // Remove the last state
+            const previousState = gameStateHistory[gameStateHistory.length - 1];
+
+            // Restore the board
+            board = previousState.board.map(row => row.map(savedPiece => {
+                if (savedPiece) {
+                    switch (savedPiece.shape) {
+                        case 'triangle':
+                            return new Triangle(savedPiece.color);
+                        case 'square':
+                            return new Square(savedPiece.color);
+                        case 'hexagon':
+                            return new Hexagon(savedPiece.color);
+                        case 'octagon':
+                            return new Octagon(savedPiece.color);
+                        default:
+                            return null;
+                    }
+                } else {
+                    return null;
+                }
+            }));
+
+            moveHistory = previousState.moveHistory;
+            currentPlayer = previousState.currentPlayer;
+
+            // Re-render the board
+            renderBoard();
+
+            // Update the current player display
+            document.getElementById('current-player').textContent = `Current Player: ${currentPlayer.toUpperCase()}`;
+        } else {
+            alert("Cannot undo any further!");
+        }
     }
 }
 

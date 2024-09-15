@@ -113,6 +113,45 @@ function isGameOver(board) {
     return false;
 }
 
+function getMergingPotential(board, color) {
+    let mergingPotential = 0;
+    const piecePositions = {};
+
+    // Collect positions of pieces by shape
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+            const piece = board[row][col];
+            if (piece && piece.color === color) {
+                if (!piecePositions[piece.shape]) {
+                    piecePositions[piece.shape] = [];
+                }
+                piecePositions[piece.shape].push({ row, col });
+            }
+        }
+    }
+
+    // Check for potential merges
+    for (const shape in piecePositions) {
+        const positions = piecePositions[shape];
+        for (let i = 0; i < positions.length; i++) {
+            for (let j = i + 1; j < positions.length; j++) {
+                if (areAdjacent(positions[i], positions[j])) {
+                    mergingPotential += 1;
+                }
+            }
+        }
+    }
+
+    return mergingPotential;
+}
+
+// Helper function to check adjacency
+function areAdjacent(pos1, pos2) {
+    const dx = Math.abs(pos1.row - pos2.row);
+    const dy = Math.abs(pos1.col - pos2.col);
+    return (dx + dy === 1); // Adjust based on your game's adjacency rules
+}
+
 // Evaluation function to assess the board state
 function evaluateBoard(board, aiColor) {
     const opponentColor = aiColor === 'red' ? 'black' : 'red';
@@ -122,14 +161,19 @@ function evaluateBoard(board, aiColor) {
     score += getMaterialScore(board, aiColor);
     score -= getMaterialScore(board, opponentColor);
 
-    // Mobility Score (number of valid moves)
+    // Mobility Score
     const aiMoves = getAllValidMoves(board, aiColor).length;
     const opponentMoves = getAllValidMoves(board, opponentColor).length;
     score += aiMoves * 10;
     score -= opponentMoves * 10;
 
+    // Merging Potential
+    score += getMergingPotential(board, aiColor) * 50; // Adjust weight as needed
+    score -= getMergingPotential(board, opponentColor) * 50;
+
     return score;
 }
+
 
 // Helper functions
 
@@ -180,9 +224,9 @@ function getMaterialScore(board, color) {
 function getPieceValue(piece) {
     switch (piece.shape) {
         case 'triangle': return 100;
-        case 'square': return 200;
-        case 'hexagon': return 400;
-        case 'octagon': return 800;
+        case 'square': return 300;   // Increased from 200
+        case 'hexagon': return 900;  // Increased from 400
+        case 'octagon': return 2700; // Increased from 800
         default: return 0;
     }
 }
