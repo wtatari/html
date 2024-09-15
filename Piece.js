@@ -318,9 +318,12 @@ export class Octagon extends Piece {
     }
 
     mergeWith(otherPiece) {
-        return null; // Octagons cannot merge further
+        if (otherPiece instanceof Octagon && otherPiece.color === this.color) {
+            return this; // Return the current octagon after merging
+        }
+        return null; // Octagons cannot merge with other shapes
     }
-}
+    }
 
 // Helper function to calculate moves
 function calculatePieceMoves(piece, fromRow, fromCol, directions, board) {
