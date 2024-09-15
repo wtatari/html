@@ -12,12 +12,25 @@
         <h1 class="mb-4">ZaaWea</h1>
         <div id="current-player" class="badge badge-primary">RED</div>
         <div id="game-board" class="my-4"></div>
-        <button id="reset-btn" class="btn btn-danger mb-3">Reset Game</button><br />
-        <button id="undo-btn" class="btn btn-warning mb-3">Undo Last Move</button>
-
-        <a href="disclosure.html" class="btn btn-link">View Public Disclosure</a>
-        <a href="rules.html" class="btn btn-link">How to play</a>
-
+        <div class="action-section">
+            <div class="row mb-2">
+                <div class="col">
+                    <button id="reset-btn" class="btn btn-danger btn-sm btn-block">Reset Game</button>
+                </div>
+                <div class="col">
+                    <button id="undo-btn" class="btn btn-warning btn-sm btn-block">Undo Last Move</button>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <a href="disclosure.html" class="btn btn-link btn-sm btn-block">Public Disclosure</a>
+                </div>
+                <div class="col">
+                    <a href="rules.html" class="btn btn-link btn-sm btn-block">How to Play</a>
+                </div>
+            </div>
+        </div>
+        
     </div>
     <footer class="text-center mt-4">
         <p>&copy; <span id="year"></span> ZaaWea | Designed by wtatari</p>
