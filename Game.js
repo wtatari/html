@@ -1,5 +1,8 @@
+// game.js
+
 import { BOARD_SIZE } from './Constants.js';
 import { Triangle, Square, Hexagon, Octagon } from './Piece.js';
+import { getAIMove } from './AI.js'; // Import the AI module
 
 let selectedPiece = null;
 let selectedPosition = null;
@@ -7,6 +10,8 @@ let highlightedMoves = [];
 let currentPlayer = 'red'; // Game starts with red player
 let moveHistory = [];
 let gameStateHistory = [];
+let gameMode = 'human-vs-ai'; // Default to human vs AI mode
+let aiColor = 'black'; // AI plays as black
 
 // Helper function to get piece letter
 function getPieceLetter(piece) {
@@ -101,7 +106,11 @@ function renderBoard() {
             div.classList.add('tile', (rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark');
             div.dataset.row = rowIndex;
             div.dataset.col = colIndex;
-            div.addEventListener('click', handleTileClick);
+
+            // Only add event listener if it's human's turn or in human vs human mode
+            if (gameMode === 'human-vs-human' || currentPlayer !== aiColor) {
+                div.addEventListener('click', handleTileClick);
+            }
 
             if (tile) {
                 const text = document.createElement('span');
@@ -120,6 +129,14 @@ function renderBoard() {
 
     // Update current player display
     document.getElementById('current-player').textContent = `Current Player: ${currentPlayer.toUpperCase()}`;
+
+    // If it's the AI's turn and the game mode is human vs AI, make the AI move
+    if (gameMode === 'human-vs-ai' && currentPlayer === aiColor) {
+        // Delay the AI move slightly to simulate thinking time
+        setTimeout(() => {
+            makeAIMove();
+        }, 500);
+    }
 }
 
 // Handle tile click
@@ -132,6 +149,11 @@ function handleTileClick(event) {
 // Select and move pieces
 function selectPiece(row, col) {
     const piece = board[row][col];
+
+    // In human vs AI mode, prevent the human from selecting the AI's pieces
+    if (gameMode === 'human-vs-ai' && currentPlayer === aiColor) {
+        return; // It's the AI's turn, so ignore human input
+    }
 
     if (selectedPiece) {
         // Move or merge selected piece
@@ -191,39 +213,50 @@ function recordMove(piece, from, to) {
     const fromPosition = convertToAlgebraic(from.row, from.col); // e.g., 'a8'
     const toPosition = convertToAlgebraic(to.row, to.col); // e.g., 'b7'
     moveHistory.push(`${pieceLetter}${fromPosition}${toPosition}`);
-
-    // Removed the saveCurrentGameState() call from here
-    // saveCurrentGameState();
 }
 
-// Update the player badge color and name
-function updatePlayerBadge(player) {
-    var badge = document.getElementById('current-player');
-    var playerName = document.getElementById('player-name');
-    playerName.textContent = player.toUpperCase();
+// Function for the AI to make its move
+function makeAIMove() {
+    const aiMove = getAIMove(board, aiColor);
+    if (aiMove) {
+        const { from, to, moveDetails, piece } = aiMove;
 
-    // Remove existing player color classes
-    badge.classList.remove('badge-red', 'badge-blue');
+        // Execute the move
+        if (moveDetails.merge) {
+            board[to.row][to.col] = moveDetails.merge;
+            board[from.row][from.col] = null;
+            checkWinByMergingOctagons(moveDetails.merge);
+        } else if (moveDetails.eat) {
+            if (moveDetails.both) {
+                board[to.row][to.col] = null;
+                board[from.row][from.col] = null;
+            } else {
+                board[to.row][to.col] = piece;
+                board[from.row][from.col] = null;
+            }
+        } else {
+            board[to.row][to.col] = piece;
+            board[from.row][from.col] = null;
+        }
 
-    // Add new class based on player
-    if (player.toUpperCase() === 'RED') {
-        badge.classList.add('badge-red');
-    } else if (player.toUpperCase() === 'BLUE' || player.toUpperCase() === 'BLACK') {
-        badge.classList.add('badge-blue');
+        // Record the move
+        recordMove(piece, from, to);
+
+        // Switch player after AI move
+        currentPlayer = currentPlayer === 'red' ? 'black' : 'red';
+
+        // Save current state for undo
+        saveCurrentGameState();
+
+        checkLoseCondition(); // Check if any player has lost all octagons
+
+        // Render the board after AI move
+        renderBoard();
+    } else {
+        alert('AI has no valid moves! You win!');
+        resetGame();
     }
 }
-
-// Example of adding event listeners to tiles
-const tiles = document.querySelectorAll('.tile');
-
-tiles.forEach(tile => {
-    tile.addEventListener('click', () => {
-        // Handle tile click
-        // For example, select the tile, highlight it, or move a piece
-        tile.classList.toggle('selected');
-    });
-});
-
 
 // Undo last move
 function undoLastMove() {
@@ -277,7 +310,14 @@ function resetGame() {
     renderBoard();
 }
 
+// Add event listener for reset button
 document.getElementById('reset-btn').addEventListener('click', resetGame);
+
+// Add event listener to select game mode
+document.getElementById('mode-select').addEventListener('change', function(event) {
+    gameMode = event.target.value;
+    resetGame();
+});
 
 // Initial render and save the initial state
 saveCurrentGameState();
