@@ -100,32 +100,70 @@ function renderBoard() {
     const gameBoard = document.getElementById('game-board');
     gameBoard.innerHTML = '';
 
-    board.forEach((row, rowIndex) => {
-        row.forEach((tile, colIndex) => {
-            const div = document.createElement('div');
-            div.classList.add('tile', (rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark');
-            div.dataset.row = rowIndex;
-            div.dataset.col = colIndex;
+    const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const rows = [8, 7, 6, 5, 4, 3, 2, 1]; // Rows numbered from top to bottom
 
-            // Only add event listener if it's human's turn or in human vs human mode
+    // Create the top labels
+    gameBoard.appendChild(createEmptyCell()); // Empty corner cell
+    for (let col = 0; col < 8; col++) {
+        const labelCell = document.createElement('div');
+        labelCell.classList.add('board-label');
+        labelCell.textContent = columns[col];
+        gameBoard.appendChild(labelCell);
+    }
+    gameBoard.appendChild(createEmptyCell()); // Empty corner cell
+
+    for (let row = 0; row < 8; row++) {
+        // Left label
+        const labelCell = document.createElement('div');
+        labelCell.classList.add('board-label');
+        labelCell.textContent = rows[row];
+        gameBoard.appendChild(labelCell);
+
+        for (let col = 0; col < 8; col++) {
+            const tile = board[row][col]; // Use board indices directly
+            const div = document.createElement('div');
+            const isWhiteTile = (row + col) % 2 === 0;
+            div.classList.add('tile', isWhiteTile ? 'white' : 'black');
+            div.dataset.row = row;
+            div.dataset.col = col;
+
+            // Add event listener if it's the human's turn
             if (gameMode === 'human-vs-human' || currentPlayer !== aiColor) {
                 div.addEventListener('click', handleTileClick);
             }
 
             if (tile) {
-                const text = document.createElement('span');
-                text.className = tile.getClass();
-                text.textContent = tile.getSymbol();
-                div.appendChild(text);
+                const img = document.createElement('img');
+                img.src = tile.getImagePath();
+                img.className = tile.getClass();
+                img.alt = `${tile.color} ${tile.shape}`;
+                div.appendChild(img);
             }
 
-            if (highlightedMoves.some(move => move.row === rowIndex && move.col === colIndex)) {
+            if (highlightedMoves.some(move => move.row === row && move.col === col)) {
                 div.classList.add('selected');
             }
 
             gameBoard.appendChild(div);
-        });
-    });
+        }
+
+        // Right label
+        const labelCellRight = document.createElement('div');
+        labelCellRight.classList.add('board-label');
+        labelCellRight.textContent = rows[row];
+        gameBoard.appendChild(labelCellRight);
+    }
+
+    // Create the bottom labels
+    gameBoard.appendChild(createEmptyCell()); // Empty corner cell
+    for (let col = 0; col < 8; col++) {
+        const labelCell = document.createElement('div');
+        labelCell.classList.add('board-label');
+        labelCell.textContent = columns[col];
+        gameBoard.appendChild(labelCell);
+    }
+    gameBoard.appendChild(createEmptyCell()); // Empty corner cell
 
     // Update current player display
     document.getElementById('current-player').textContent = `Current Player: ${currentPlayer.toUpperCase()}`;
@@ -137,6 +175,12 @@ function renderBoard() {
             makeAIMove();
         }, 500);
     }
+}
+
+function createEmptyCell() {
+    const div = document.createElement('div');
+    div.classList.add('board-label');
+    return div;
 }
 
 // Handle tile click

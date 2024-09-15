@@ -10,19 +10,8 @@ export class Piece {
         this.steps = steps;
     }
 
-    getSymbol() {
-        switch (this.shape) {
-            case 'triangle':
-                return this.color === 'red' ? '▲' : '▼';
-            case 'square':
-                return '◊';
-            case 'hexagon':
-                return '⬢';
-            case 'octagon':
-                return '○';
-            default:
-                return '';
-        }
+    getImagePath() {
+        return `assets/${this.shape}-${this.color}.png`;
     }
 
     getClass() {
