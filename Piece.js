@@ -85,7 +85,7 @@ export class Piece {
 // Triangle class 
 export class Triangle extends Piece {
     constructor(color) {
-        super(color, 'triangle', 3);
+        super(color, 'triangle', 2);
     }
 
     getCorners() {
@@ -119,7 +119,7 @@ export class Triangle extends Piece {
 // Square class remains unchanged except for canCapture
 export class Square extends Piece {
     constructor(color) {
-        super(color, 'square', 4);
+        super(color, 'square', 3);
     }
 
     getCorners() {
@@ -198,7 +198,7 @@ export class Square extends Piece {
 
 export class Hexagon extends Piece {
     constructor(color) {
-        super(color, 'hexagon', 6);
+        super(color, 'hexagon', 5);
     }
 
     getCorners() {
@@ -265,7 +265,7 @@ export class Hexagon extends Piece {
 // Octagon class
 export class Octagon extends Piece {
     constructor(color) {
-        super(color, 'octagon', 8);
+        super(color, 'octagon', 7);
     }
 
     getCorners() {
@@ -282,41 +282,47 @@ export class Octagon extends Piece {
         return calculatePieceMoves(this, fromRow, fromCol, directions, board);
     }
 
-    // Updated canCapture method
-    canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
-        // Allow Octagons to capture any piece, regardless of color
+// Updated canCapture method for Octagon
+canCapture(targetPiece, fromRow, fromCol, targetRow, targetCol) {
+    // Calculate direction of the attack
+    const rowDiff = targetRow - fromRow;
+    const colDiff = targetCol - fromCol;
+    const dir = { row: Math.sign(rowDiff), col: Math.sign(colDiff) };
 
-        // Calculate direction of the attack
-        const rowDiff = targetRow - fromRow;
-        const colDiff = targetCol - fromCol;
-        const dir = { row: Math.sign(rowDiff), col: Math.sign(colDiff) };
+    // Define allowed directions based on target piece
+    let allowedDirections = [];
 
-        // Define allowed directions based on target piece
-        let allowedDirections = [];
-
-        if (targetPiece.shape === 'hexagon') {
-            allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
-        } else if (targetPiece.shape === 'triangle') {
-            if (this.color === 'red') {
-                // Black Octagons can capture Triangles from S, W, E, NW, NE
-                allowedDirections = [DIRECTIONS.S, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.NW, DIRECTIONS.NE];
-            } else if (this.color === 'black') {
-                // Red Octagons can capture Triangles from N, W, E, SW, SE
-                allowedDirections = [DIRECTIONS.N, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.SW, DIRECTIONS.SE];
-            }
-        } else {
-            // For other pieces, allow capture from any direction
-            allowedDirections = Object.values(DIRECTIONS);
-        }
-
-        // Check if attack direction is allowed
-        if (allowedDirections.some(d => d.row === dir.row && d.col === dir.col)) {
-            return true;
-        } else {
-            return false;
+    // Hexagon capture logic (same for both colors)
+    if (targetPiece.shape === 'hexagon') {
+        allowedDirections = [DIRECTIONS.W, DIRECTIONS.E];
+    }
+    // Triangle capture logic (color-dependent)
+    else if (targetPiece.shape === 'triangle') {
+        if (this.color === 'red') {
+            // Red Octagons can capture Triangles from S, W, E, NW, and NE
+            allowedDirections = [DIRECTIONS.S, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.NW, DIRECTIONS.NE];
+        } else if (this.color === 'black') {
+            // Black Octagons can capture Triangles from N, W, E, SW, and SE
+            allowedDirections = [DIRECTIONS.N, DIRECTIONS.W, DIRECTIONS.E, DIRECTIONS.SW, DIRECTIONS.SE];
         }
     }
+    // Square capture logic
+    else if (targetPiece.shape === 'square') {
+        if (this.color === 'red') {
+            // Red Octagons cannot capture Squares from N, E, W, or S
+            allowedDirections = [DIRECTIONS.NW, DIRECTIONS.NE, DIRECTIONS.SW, DIRECTIONS.SE];
+        } else if (this.color === 'black') {
+            // Black Octagons cannot capture Squares from N, E, W, or S
+            allowedDirections = [DIRECTIONS.NW, DIRECTIONS.NE, DIRECTIONS.SW, DIRECTIONS.SE];
+        }
+    } else {
+        // Default behavior for other pieces
+        allowedDirections = Object.values(DIRECTIONS);
+    }
 
+    // Check if attack direction is allowed
+    return allowedDirections.some(d => d.row === dir.row && d.col === dir.col);
+}
     mergeWith(otherPiece) {
         if (otherPiece instanceof Octagon && otherPiece.color === this.color) {
             return this; // Return the current octagon after merging
